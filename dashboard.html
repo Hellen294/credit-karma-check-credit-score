@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Credit Karma - Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f6fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      background: #00aaff;
+      color: white;
+      padding: 15px 20px;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar i {
+      margin-right: 10px;
+    }
+
+    .header-info {
+      background: linear-gradient(to right, #e0f7fa, #ffffff);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 25px 20px;
+      margin: 20px auto;
+      max-width: 900px;
+      border-radius: 16px;
+      text-align: center;
+    }
+
+    .header-info h2 {
+      font-size: 30px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #003f5c;
+      text-shadow: 1px 1px 1px #ccc;
+    }
+
+    .header-info p {
+      font-size: 17px;
+      color: #444;
+      margin: 6px 0;
+    }
+
+    .credit-info-box {
+      margin-top: 12px;
+      padding: 15px;
+      border: 2px solid #00aaff;
+      border-radius: 12px;
+      background: #f0f8ff;
+      font-weight: bold;
+      font-size: 18px;
+      text-shadow: 1px 1px 0 #ccefff;
+      box-shadow: inset 0 0 10px #ccf0ff;
+    }
+
+    .dashboard-wrapper {
+      max-width: 900px;
+      margin: 10px auto 40px;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 0 15px rgba(0,0,0,0.08);
+      border-radius: 12px;
+    }
+
+    .gauges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .gauge-box {
+      flex: 1 1 300px;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .gauge-box canvas {
+      width: 100%;
+      max-width: 300px;
+      height: auto;
+    }
+
+    .gauge-box p {
+      font-size: 18px;
+      margin-top: 10px;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .score-frame {
+      margin-top: 5px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #0077cc;
+      text-shadow: 1px 1px 2px #ccc;
+    }
+
+    .loading {
+      text-align: center;
+      font-size: 18px;
+      color: #555;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <i class="fas fa-credit-card"></i> Credit Karma
+  </div>
+
+  <div class="header-info" id="userHeader" style="display:none;">
+    <h2>Welcome, <span id="userName">User</span></h2>
+    <p><b>Date of Birth:</b> <span id="dob">--</span></p>
+    <p><b>Address:</b> <span id="address">--</span></p>
+    <p><b>Phone:</b> <span id="phone">--</span></p>
+    <div class="credit-info-box">Credit Info: <span id="scoreInfo">--</span></div>
+  </div>
+
+  <div class="dashboard-wrapper" id="dashboardCard" style="display:none;">
+    <div class="gauges">
+      <div class="gauge-box">
+        <canvas id="creditGauge"></canvas>
+        <div class="score-frame" id="creditValue">--</div>
+        <p>Credit Score</p>
+      </div>
+      <div class="gauge-box">
+        <canvas id="infoGauge"></canvas>
+        <p>Credit Info Quality</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading" id="loadingText">Loading dashboard...</div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBT1_8dM11M94hdZzIrXePmWxvC30BJax8",
+      authDomain: "register-30bec.firebaseapp.com",
+      projectId: "register-30bec",
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function createGauge(targetId, value) {
+      const opts = {
+        angle: 0,
+        lineWidth: 0.3,
+        radiusScale: 1,
+        pointer: {
+          length: 0.6,
+          strokeWidth: 0.035,
+          color: '#000000'
+        },
+        staticLabels: {
+          font: "12px sans-serif",
+          labels: [0, 300, 500, 700, 900],
+          color: "#000",
+          fractionDigits: 0
+        },
+        limitMax: false,
+        limitMin: false,
+        colorStart: '#00c9ff',
+        colorStop: '#92fe9d',
+        strokeColor: '#e0e0e0',
+        highDpiSupport: true
+      };
+
+      const canvas = document.getElementById(targetId);
+      const gauge = new Gauge(canvas).setOptions(opts);
+      gauge.maxValue = 900;
+      gauge.setMinValue(0);
+      gauge.animationSpeed = 40;
+      gauge.set(value);
+    }
+
+    function mapScoreInfoToValue(info) {
+      const mapping = {
+        "Excellent: Pays bills on time, low credit usage.": 900,
+        "Trusted: Long-term borrower with strong record.": 800,
+        "Good: Minor delays, healthy credit habits.": 700,
+        "Fair: Occasional missed payments, moderate debt.": 600,
+        "Recovering: Rebuilding after default.": 500,
+        "New User: No credit history yet.": 400,
+        "Monitoring: Under review due to inconsistencies.": 300,
+        "Manual Review: Needs manual assessment for approval.": 200,
+        "Poor: Frequent late payments, high credit utilization.": 150,
+        "High Risk: Multiple delinquencies reported.": 100
+      };
+      return mapping[info] || 0;
+    }
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        const uid = user.uid;
+        db.collection("users").doc(uid).get().then(doc => {
+          if (doc.exists) {
+            const data = doc.data();
+            const score = parseInt(data.creditScore) || 0;
+            const info = data.scoreInfo || '--';
+            const infoScore = mapScoreInfoToValue(info);
+
+            document.getElementById("userName").innerText = data.name || 'User';
+            document.getElementById("dob").innerText = data.dob || '--';
+            document.getElementById("address").innerText = data.address || '--';
+            document.getElementById("phone").innerText = data.phone || '--';
+            document.getElementById("scoreInfo").innerText = info;
+            document.getElementById("creditValue").innerText = score;
+
+            document.getElementById("userHeader").style.display = 'block';
+            document.getElementById("dashboardCard").style.display = 'block';
+            document.getElementById("loadingText").style.display = 'none';
+
+            createGauge("creditGauge", score);
+            createGauge("infoGauge", infoScore);
+          } else {
+            document.getElementById("loadingText").innerText = "User data not found.";
+          }
+        }).catch(err => {
+          console.error("Error fetching user data:", err);
+          document.getElementById("loadingText").innerText = "Failed to load user data.";
+        });
+      } else {
+        window.location.href = "index.html";
+      }
+    });
+  </script>
+</body>
+</html>
