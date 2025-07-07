@@ -273,22 +273,42 @@
       });
     }
 
-    function createGauge(targetId, value) {
-      const opts = {
-        angle: 0,
-        lineWidth: 0.3,
-        radiusScale: 1,
-        pointer: { length: 0.6, strokeWidth: 0.035, color: '#000000' },
-        staticLabels: { font: "12px sans-serif", labels: [0, 300, 500, 700, 900], color: "#000", fractionDigits: 0 },
-        colorStart: '#00c9ff', colorStop: '#92fe9d', strokeColor: '#e0e0e0', highDpiSupport: true
-      };
-      const canvas = document.getElementById(targetId);
-      const gauge = new Gauge(canvas).setOptions(opts);
-      gauge.maxValue = 900;
-      gauge.setMinValue(0);
-      gauge.animationSpeed = 40;
-      gauge.set(value);
-    }
+function createGauge(targetId, value) {
+  const opts = {
+    angle: 0,
+    lineWidth: 0.3,
+    radiusScale: 1,
+    pointer: {
+      length: 0.6,
+      strokeWidth: 0.035,
+      color: '#000000'
+    },
+    staticLabels: {
+      font: "12px sans-serif",
+      labels: [0, 300, 500, 700, 900],
+      color: "#000",
+      fractionDigits: 0
+    },
+    staticZones: [
+      { strokeStyle: "#ff0000", min: 0, max: 300 },     // Red
+      { strokeStyle: "#ff9900", min: 300, max: 500 },   // Orange
+      { strokeStyle: "#ffff00", min: 500, max: 700 },   // Yellow
+      { strokeStyle: "#99cc00", min: 700, max: 800 },   // Light Green
+      { strokeStyle: "#00cc00", min: 800, max: 900 }    // Green
+    ],
+    limitMax: false,
+    limitMin: false,
+    strokeColor: '#e0e0e0',
+    highDpiSupport: true
+  };
+
+  const canvas = document.getElementById(targetId);
+  const gauge = new Gauge(canvas).setOptions(opts);
+  gauge.maxValue = 900;
+  gauge.setMinValue(0);
+  gauge.animationSpeed = 40;
+  gauge.set(value);
+}
 
     function mapScoreInfoToValue(info) {
       const mapping = {
