@@ -6,191 +6,169 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
   <style>
+    :root {
+      --primary-blue: #1e88e5;
+      --light-blue: #64b5f6;
+      --card-bg: #ffffff;
+      --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --soft-bg: #f0f3f7;
+      --text-dark: #333333;
+    }
+
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #f5f6fa;
       margin: 0;
-      padding: 0;
+      background: var(--soft-bg);
     }
 
     .navbar {
-      background: #00aaff;
+      background: linear-gradient(90deg, var(--light-blue), var(--primary-blue));
       color: white;
-      padding: 15px 20px;
-      font-size: 22px;
+      padding: 16px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: var(--card-shadow);
     }
-
-    .navbar i {
-      margin-right: 10px;
-    }
-
+    .navbar i { margin-right: 8px; }
     .logout-btn {
-      background: white;
-      color: #00aaff;
+      background: #ffffff;
+      color: var(--primary-blue);
       border: none;
       padding: 8px 16px;
-      font-weight: bold;
-      border-radius: 6px;
+      font-weight: 600;
+      border-radius: 8px;
       cursor: pointer;
+      transition: background 0.2s;
     }
-
     .logout-btn:hover {
-      background: #e0f4ff;
+      background: #f1faff;
     }
 
-    .header-info {
-      background: linear-gradient(to right, #e0f7fa, #ffffff);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      padding: 25px 20px;
+    .header-info, .dashboard-wrapper, .breakdown, .history, .recommendations, .alerts {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--card-shadow);
       margin: 20px auto;
       max-width: 900px;
-      border-radius: 16px;
-      text-align: center;
+      padding: 24px;
     }
-
     .header-info h2 {
-      font-size: 30px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      color: #003f5c;
-      text-shadow: 1px 1px 1px #ccc;
+      font-size: 28px;
+      margin-bottom: 8px;
+      color: var(--primary-blue);
     }
-
     .header-info p {
-      font-size: 17px;
-      color: #444;
-      margin: 6px 0;
+      color: #555;
+      margin: 4px 0;
     }
-
     .credit-info-box {
       margin-top: 12px;
-      padding: 15px;
-      border: 2px solid #00aaff;
+      background: #e3f2fd;
+      padding: 14px;
       border-radius: 12px;
-      background: #f0f8ff;
-      font-weight: bold;
-      font-size: 18px;
-      text-shadow: 1px 1px 0 #ccefff;
-      box-shadow: inset 0 0 10px #ccf0ff;
-    }
-
-    .dashboard-wrapper {
-      max-width: 900px;
-      margin: 10px auto 40px;
-      padding: 20px;
-      background: white;
-      box-shadow: 0 0 15px rgba(0,0,0,0.08);
-      border-radius: 12px;
+      font-weight: 600;
+      color: var(--text-dark);
+      text-align: center;
     }
 
     .gauges {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      gap: 20px;
-      align-items: center;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
     }
-
     .gauge-box {
-      flex: 1 1 300px;
-      max-width: 400px;
+      background: rgba(30, 136, 229, 0.05);
+      border-radius: 12px;
+      padding: 20px;
       text-align: center;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
     }
-
     .gauge-box canvas {
       width: 100%;
-      max-width: 300px;
+      max-width: 220px;
       height: auto;
+      margin: 0 auto;
     }
-
     .gauge-box p {
-      font-size: 18px;
-      margin-top: 10px;
-      color: #333;
+      font-size: 16px;
+      margin-top: 12px;
+      color: var(--text-dark);
       font-weight: 600;
     }
-
     .score-frame {
-      margin-top: 5px;
-      font-size: 24px;
-      font-weight: bold;
-      color: #0077cc;
-      text-shadow: 1px 1px 2px #ccc;
+      font-size: 26px;
+      margin: 8px 0;
+      color: var(--primary-blue);
+      font-weight: 700;
     }
 
-    .loading {
-      text-align: center;
-      font-size: 18px;
-      color: #555;
-      margin-top: 50px;
+    .breakdown h3, .alerts h3, .history h3, .recommendations h3 {
+      font-size: 20px;
+      margin-bottom: 12px;
+      color: var(--primary-blue);
     }
-
-    .breakdown, .history, .recommendations, .alerts {
-      margin-top: 30px;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      background: #fafafa;
-    }
-
-    .breakdown h3, .history h3, .recommendations h3, .alerts h3 {
-      margin-bottom: 15px;
-      color: #0077cc;
-    }
-
-    .breakdown ul, .recommendations ul, .alerts ul {
+    .breakdown ul, .alerts ul, .recommendations ul {
       list-style: none;
       padding: 0;
+      color: #555;
     }
-
     .breakdown li, .recommendations li, .alerts li {
-      margin: 8px 0;
-      font-size: 16px;
+      margin: 6px 0;
+      font-size: 15px;
     }
 
     .history table {
       width: 100%;
       border-collapse: collapse;
+      color: #555;
     }
-
     .history th, .history td {
-      border: 1px solid #ccc;
-      padding: 10px;
+      border: 1px solid #ddd;
+      padding: 10px 8px;
       text-align: center;
+      font-size: 15px;
     }
 
     .print-btn {
-      margin-top: 20px;
-      display: block;
-      padding: 10px 20px;
-      background-color: #00aaff;
+      background: var(--primary-blue);
       color: white;
       border: none;
-      border-radius: 6px;
-      font-weight: bold;
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-size: 16px;
+      margin-top: 20px;
       cursor: pointer;
+      transition: background 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .print-btn:hover {
+      background: var(--light-blue);
     }
 
-    .print-btn:hover {
-      background-color: #0077cc;
+    .loading {
+      font-size: 18px;
+      color: #666;
+      text-align: center;
+      margin: 50px 0;
     }
   </style>
 </head>
 <body>
   <div class="navbar">
     <span><i class="fas fa-credit-card"></i> Credit Karma</span>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+    <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
   </div>
 
   <div class="header-info" id="userHeader" style="display:none;">
     <h2>Welcome, <span id="userName">User</span></h2>
-    <p><b>Date of Birth:</b> <span id="dob">--</span></p>
-    <p><b>Address:</b> <span id="address">--</span></p>
-    <p><b>Phone:</b> <span id="phone">--</span></p>
-    <div class="credit-info-box">Credit Info: <span id="scoreInfo">--</span></div>
+    <p><strong>Date of Birth:</strong> <span id="dob">--</span></p>
+    <p><strong>Address:</strong> <span id="address">--</span></p>
+    <p><strong>Phone:</strong> <span id="phone">--</span></p>
+    <div class="credit-info-box">
+      Credit Info: <span id="scoreInfo">--</span>
+    </div>
   </div>
 
   <div class="dashboard-wrapper" id="dashboardCard" style="display:none;">
@@ -202,11 +180,12 @@
       </div>
       <div class="gauge-box">
         <canvas id="infoGauge"></canvas>
+        <div class="score-frame">--</div>
         <p>Credit Info Quality</p>
       </div>
       <div class="gauge-box">
         <canvas id="transunionGauge"></canvas>
-        <div class="score-frame">690</div>
+        <div class="score-frame">750</div>
         <p>TransUnion Score</p>
       </div>
       <div class="gauge-box">
@@ -216,8 +195,17 @@
       </div>
     </div>
 
+    <div class="alerts">
+      <h3><i class="fas fa-bell"></i> Credit Alerts</h3>
+      <ul>
+        <li>⚠️ High utilization warning: 75% on Card: *******5729</li>
+        <li>✅ No missed payments this month</li>
+        <li>🔍 1 new credit inquiry from Bank of the People</li>
+      </ul>
+    </div>
+
     <div class="breakdown">
-      <h3>Score Breakdown</h3>
+      <h3><i class="fas fa-chart-pie"></i> Score Breakdown</h3>
       <ul>
         <li>✔ Payment History: Excellent</li>
         <li>✔ Credit Utilization: 25%</li>
@@ -228,7 +216,7 @@
     </div>
 
     <div class="history">
-      <h3>Score History</h3>
+      <h3><i class="fas fa-history"></i> Score History</h3>
       <table>
         <tr><th>Date</th><th>Score</th><th>Status</th></tr>
         <tr><td>2025-07-01</td><td>740</td><td>Stable</td></tr>
@@ -237,17 +225,8 @@
       </table>
     </div>
 
-    <div class="alerts">
-      <h3>Credit Alerts</h3>
-      <ul>
-        <li>⚠️ High utilization warning: 75% on Card: *******5729</li>
-        <li>✅ No missed payments this month</li>
-        <li>🔍 1 new credit inquiry from Bank of the People</li>
-      </ul>
-    </div>
-
     <div class="recommendations">
-      <h3>Tips to Improve Your Score</h3>
+      <h3><i class="fas fa-lightbulb"></i> Tips to Improve Your Score</h3>
       <ul>
         <li>💡 Pay bills on time every month</li>
         <li>💡 Keep credit utilization below 30%</li>
@@ -256,7 +235,9 @@
       </ul>
     </div>
 
-    <button class="print-btn" onclick="window.print()">Download / Print Report</button>
+    <button class="print-btn" onclick="window.print()">
+      <i class="fas fa-download"></i> Download / Print Report
+    </button>
   </div>
 
   <div class="loading" id="loadingText">Loading dashboard...</div>
@@ -265,40 +246,19 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBT1_8dM11M94hdZzIrXePmWxvC30BJax8",
-      authDomain: "register-30bec.firebaseapp.com",
-      databaseURL: "https://register-30bec-default-rtdb.firebaseio.com",
-      projectId: "register-30bec",
-      storageBucket: "register-30bec.appspot.com",
-      messagingSenderId: "453453777157",
-      appId: "1:453453777157:web:2d7319161f370e10010f6c"
-    };
+    const firebaseConfig = { /* your config */ };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
     function logout() {
-      firebase.auth().signOut().then(() => {
-        window.location.href = "index.html";
-      });
+      firebase.auth().signOut().then(() => window.location = "index.html");
     }
 
     function createGauge(targetId, value) {
       const opts = {
-        angle: 0,
-        lineWidth: 0.3,
-        radiusScale: 1,
-        pointer: {
-          length: 0.6,
-          strokeWidth: 0.035,
-          color: '#000000'
-        },
-        staticLabels: {
-          font: "12px sans-serif",
-          labels: [0, 300, 500, 700, 900],
-          color: "#000",
-          fractionDigits: 0
-        },
+        angle: 0, lineWidth: 0.3, radiusScale: 1,
+        pointer: { length: 0.6, strokeWidth: 0.035, color: '#000' },
+        staticLabels: { font: "12px sans-serif", labels: [0,300,500,700,900], color: "#000", fractionDigits: 0 },
         staticZones: [
           { strokeStyle: "#ff0000", min: 0, max: 300 },
           { strokeStyle: "#ff9900", min: 300, max: 500 },
@@ -306,12 +266,8 @@
           { strokeStyle: "#99cc00", min: 700, max: 800 },
           { strokeStyle: "#00cc00", min: 800, max: 900 }
         ],
-        limitMax: false,
-        limitMin: false,
-        strokeColor: '#e0e0e0',
-        highDpiSupport: true
+        limitMax: false, limitMin: false, strokeColor: '#e0e0e0', highDpiSupport: true
       };
-
       const canvas = document.getElementById(targetId);
       const gauge = new Gauge(canvas).setOptions(opts);
       gauge.maxValue = 900;
@@ -321,7 +277,7 @@
     }
 
     function mapScoreInfoToValue(info) {
-      const mapping = {
+      const m = {
         "Excellent: Pays bills on time, low credit usage.": 900,
         "Trusted: Long-term borrower with strong record.": 800,
         "Good: Minor delays, healthy credit habits.": 700,
@@ -333,41 +289,35 @@
         "Poor: Frequent late payments, high credit utilization.": 150,
         "High Risk: Multiple delinquencies reported.": 100
       };
-      return mapping[info] || 0;
+      return m[info] || 0;
     }
 
     firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        const uid = user.uid;
-        db.collection("users").doc(uid).get().then(doc => {
-          if (doc.exists) {
-            const data = doc.data();
-            const score = parseInt(data.creditScore) || 0;
-            const info = data.scoreInfo || '--';
-            const infoScore = mapScoreInfoToValue(info);
-            document.getElementById("userName").innerText = data.name || 'User';
-            document.getElementById("dob").innerText = data.dob || '--';
-            document.getElementById("address").innerText = data.address || '--';
-            document.getElementById("phone").innerText = data.phone || '--';
-            document.getElementById("scoreInfo").innerText = info;
-            document.getElementById("creditValue").innerText = score;
-            document.getElementById("userHeader").style.display = 'block';
-            document.getElementById("dashboardCard").style.display = 'block';
-            document.getElementById("loadingText").style.display = 'none';
-            createGauge("creditGauge", score);
-            createGauge("infoGauge", infoScore);
-            createGauge("transunionGauge", 690);
-            createGauge("equifaxGauge", 750);
-          } else {
-            document.getElementById("loadingText").innerText = "User data not found.";
-          }
-        }).catch(err => {
-          console.error("Error fetching user data:", err);
-          document.getElementById("loadingText").innerText = "Failed to load user data.";
-        });
-      } else {
-        window.location.href = "index.html";
-      }
+      if (!user) return window.location = "index.html";
+      db.collection("users").doc(user.uid).get().then(doc => {
+        if (!doc.exists) return document.getElementById("loadingText").innerText = "User data not found.";
+        const d = doc.data();
+        const score = parseInt(d.creditScore) || 0;
+        const info = d.scoreInfo || '--';
+        const infoScore = mapScoreInfoToValue(info);
+        document.getElementById("userName").innerText = d.name || 'User';
+        document.getElementById("dob").innerText = d.dob || '--';
+        document.getElementById("address").innerText = d.address || '--';
+        document.getElementById("phone").innerText = d.phone || '--';
+        document.getElementById("scoreInfo").innerText = info;
+        document.getElementById("creditValue").innerText = score;
+        document.getElementById("userHeader").style.display = 'block';
+        document.getElementById("dashboardCard").style.display = 'block';
+        document.getElementById("loadingText").style.display = 'none';
+
+        createGauge("creditGauge", score);
+        createGauge("infoGauge", infoScore);
+        createGauge("transunionGauge", 750);
+        createGauge("equifaxGauge", 750);
+      }).catch(err => {
+        console.error(err);
+        document.getElementById("loadingText").innerText = "Failed to load user data.";
+      });
     });
   </script>
 </body>
